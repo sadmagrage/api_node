@@ -1,12 +1,15 @@
 const express = require('express');
-const progressModel = require('./models/ProgressModel');
+
+const Progress = require('./models/ProgressModel');
+const progressRoute = require("./routes/progressRoutes");
+
 const app = express();
+
+app.use('/progress', progressRoute);
+
 const port = 3000;
 
-app.use('/comida', require('./routes/comidaRoutes').router);
-app.use('/progress', require('./routes/progressRoutes').router);
-
-progressModel.sync()
+Progress.sync()
     .then(() => {
         app.listen(port, console.log(`running in port ${port}`));
     });

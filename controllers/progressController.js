@@ -1,74 +1,74 @@
-const { sequelize } = require('../config/sequelize');
-const progressModel = require('../models/ProgressModel');
-const progressValidator = require('../validators/progressValidator');
+const CustomError = require('../errors/CustomError');
+const progressService = require('../services/progressService');
 
 const getAll = async (req, res) => {
     try {
-        const data = await progressModel.findAll();
+        const progress = await progressService.getAll();
 
-        return res.status(200).json(data);
+        res.status(200).json(progress);
     } catch (error) {
+        if (error instanceof CustomError) {
+            res.status(error.status).json(error.message);
+            return;
+        }
         return res.status(500).json(error.message);
     }
 };
 
 const getOne = async (req, res) => {
     try {
-        const data = await progressModel.findOne({
-            where: {
-                progress_id: req.params.progress_id
-            }
-        });
+        const progress = await progressService.getOne(req.query);
 
-        return res.status(200).json(data);
+        res.status(200).json(progress);
     } catch (error) {
+        if (error instanceof CustomError) {
+            res.status(error.status).json(error.message);
+            return;
+        }
         return res.status(500).json(error.message);
     }
 };
 
 const post = async (req, res) => {
     try {
-        const value = progressValidator.createProgress(req.body);
-        await progressModel.create(value);
+        const progress = await progressService.save(req.body);
 
-        return res.status(201).json("CREATED");
+        res.status(201).json(progress);
     } catch (error) {
-        return res.status(500).json(error.message)
+        if (error instanceof CustomError) {
+            res.status(error.status).json(error.message);
+            return;
+        }
+        return res.status(500).json(error.message);
     }
 };
 
 const put = async (req, res) => {
     try {
-        const value = progressValidator.updateProgress(req.body);
+        const progress = await progressService.update(req.body);
 
-        await progressModel.update(value, {
-            where: {
-                progress_id: req.params.progress_id
-            }
-        });
-        return res.status(200).json("UPDATED");
+        res.status(200).json(progress);
     } catch (error) {
+        if (error instanceof CustomError) {
+            res.status(error.status).json(error.message);
+            return;
+        }
         return res.status(500).json(error.message);
     }
 };
 
 const del = async(req, res) => {
     try {
-        await progressModel.destroy({
-            where: {
-                progress_id: req.params.progress_id
-            }
-        });
-        return res.status(200).json('DELETED');
+        await progressService.del(req.body.progressId);
+
+        res.status(200).json("Progress deletado");
     } catch (error) {
+        if (error instanceof CustomError) {
+            res.status(error.status).json(error.message);
+            return;
+        }
         return res.status(500).json(error.message);
     }
 };
 
-module.exports = {
-    getAll,
-    getOne,
-    post,
-    put,
-    del
-};
+module.exports = { getAll, getOne, post, put, del };

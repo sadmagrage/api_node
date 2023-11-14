@@ -1,48 +1,38 @@
-const { DataTypes, Model, Sequelize } = require('sequelize');
-const { sequelize } = require('../config/sequelize');
+const { DataTypes } = require('sequelize');
+const uuid = require("uuid");
 
-class ProgressModel extends Model {}
+const sequelize = require("../configs/sequelize");
 
-ProgressModel.init({
-        progress_id: {
-            type: DataTypes.UUID,
-            defaultValue: Sequelize.UUIDV4,
-            primaryKey: true,
-            allowNull: false
-        },
-        nome: {
-            type: DataTypes.STRING,
-            allowNull: false
-        },
-        ano: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-        },
-        mes: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-        },
-        dia: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-        },
-        hora: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-        },
-        minuto: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-        },
-        segundo: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
+const progressSchema = sequelize.define('progress', {
+    progress_id: {
+        primaryKey: true,
+        type: DataTypes.UUID,
+        defaultValue: () => {
+            const uuidValue = uuid.v4();
+
+            const uuidStr = uuidValue.replace(/-/g, '');
+
+            const binaryData = Buffer.from(uuidStr, 'hex');
+
+            return binaryData;
         }
-    }, {
-        sequelize,
-        modelName: "ProgressModel",
-        tableName: "progress"
+    },
+    attempt: {
+        type: DataTypes.SMALLINT,
+        unique: true,
+        allowNull: false
+    },
+    timestamp: {
+        type: DataTypes.STRING(14),
+        allowNull: false
     }
-)
+}, {
+    tableName: "new_progress",
+    freezeTableName: true,
+    createdAt: false,
+    updatedAt: false
+});
 
-module.exports = ProgressModel;
+const Progress = sequelize.model("progress", progressSchema);
+
+module.exports = Progress;

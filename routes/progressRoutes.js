@@ -6,16 +6,15 @@ const progressController = require('../controllers/progressController');
 
 router.use(bodyParser.json());
 
-router.get('', progressController.getAll);
+router.get('/', progressController.getAll);
 
-router.get('/:progress_id', progressController.getOne);
+router.get('/search', progressController.getOne);
 
-router.post('', progressController.post);
+router.post('/', progressController.post);
 
-router.put('/:progress_id', progressController.put);
+router.put('/', progressController.put);
 
-router.delete('/:progress_id', progressController.del);
+router.delete('/:progressId', progressController.del);
 
-module.exports = {
-    router
-}
+module.exports = router;
+    
