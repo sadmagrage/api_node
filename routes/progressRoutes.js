@@ -8,6 +8,8 @@ router.use(bodyParser.json());
 
 router.get('/', progressController.getAll);
 
+router.get('/last', progressController.getLast);
+
 router.get('/search', progressController.getOne);
 
 router.post('/', progressController.post);

@@ -5,9 +5,7 @@ const progressIdToUuid = (progressItem) => {
 
     delete reformedProgress.progress_id;
 
-    const horarioBrasilia = new Date(parseInt(reformedProgress.timestamp) - 3 * 1000 * 60 * 60);
-
-    reformedProgress.date = horarioBrasilia;
+    reformedProgress.date = new Date(parseInt(reformedProgress.timestamp));
 
     return reformedProgress;
 };
