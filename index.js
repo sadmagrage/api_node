@@ -13,7 +13,7 @@ app.use(cors({ origin: "https://progress-rework.vercel.app" }));
 app.use('/progress', progressRoute);
 app.use('/user', userRoute);
 
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 Progress.sync()
     .then(() => {
